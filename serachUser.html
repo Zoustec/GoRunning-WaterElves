@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>水精靈排行</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+
+    <h1>
+        排行榜
+    </h1>
+
+    <p id="amount"></p>
+
+    <form name="myForm">
+        <p id="error">請輸入密碼</p>
+        <input type="text" name="myText" value="">
+        <input id="mybtn" type="button" value="查詢" onClick="ShowMeDate()">
+    </form>
+
+    <div id="rank">
+        
+        <table id = "mytable">
+            <thead style="color:brown">
+                <tr>
+                    <td style="padding-right: 20px">姓名</td>
+                    <td style="padding-right: 20px">名次</td>
+                    <td style="padding-right: 20px">分數</td>
+                    <td style="padding-right: 20px">信箱</td>
+                  </tr>
+              </thead>
+        </table>
+    </div>
+    
+
+     <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-firestore.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      var firebaseConfig = {
+        apiKey: "AIzaSyDaJYuppYRvVa0QV8D2qJ7chGn_UiHz8jA",
+        authDomain: "go-running-water-elves.firebaseapp.com",
+        projectId: "go-running-water-elves",
+        storageBucket: "go-running-water-elves.appspot.com",
+        messagingSenderId: "429100463832",
+        appId: "1:429100463832:web:777d6842ae6a8bbf11c9ad",
+        measurementId: "G-JR6LTEXEHZ"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+
+      function ShowMeDate() {
+        var pd = document.myForm.myText.value;
+
+        if(pd == "46459937")
+        {
+            var myForm = document.myForm;
+            myForm.style.display = "none";
+
+            var washingtonRef = firebase.firestore().collection("user").doc("status");
+            washingtonRef.get().then(function(doc) {
+                if (!doc.exists) {
+                    var elem = document.getElementById('amount');
+                    elem.innerHTML = "無法查詢";
+                }
+                else if (!doc.data().available) {
+                    var elem = document.getElementById('amount');
+                    elem.innerHTML = "遊戲不開放";
+                }
+                else
+                {
+                    var elem = document.getElementById('amount');
+                    elem.innerHTML = "遊玩人數:" + doc.data().population;
+                }
+            });
+
+            var washingtonRef = firebase.firestore().collection("user").doc("userInfo");
+            washingtonRef.get().then(function(doc) {
+                if (!doc.exists) {
+                    var elem = document.getElementById('rank');
+                    elem.innerHTML = "資料不存在";
+                }
+                else
+                {
+                    var _data = doc.data().data;
+                    var ranking = 0;
+                    for (var i = 0; i <  _data.length; i++) {
+                        var newTr = document.createElement("tr");
+                        var newTd1 = document.createElement("td");
+                        newTd1.innerHTML =  _data[i].name;
+                        newTr.appendChild(newTd1);
+                        var newTd2 = document.createElement("td");
+                        newTd2.innerHTML = (i+1);
+                        newTr.appendChild(newTd2);
+                        var newTd3 = document.createElement("td");
+                        newTd3.innerHTML = _data[i].score;
+                        newTr.appendChild(newTd3);
+                        var newTd4 = document.createElement("td");
+                        newTd4.innerHTML = _data[i].email;
+                        newTr.appendChild(newTd4);
+
+                        var currenTtable = document.getElementById("mytable");
+                        currenTtable.appendChild(newTr);
+                    }
+
+                    // var elem = document.getElementById('rank');
+                    // elem.innerHTML = _data[i].score;
+                }
+            });
+        }
+        else
+        {
+            var elem = document.getElementById('error');
+            elem.innerHTML = "密碼錯誤";
+        }
+        
+      }
+
+        
+    </script>
+  </body>
+</html>
